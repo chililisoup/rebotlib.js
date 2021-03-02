@@ -1,4 +1,4 @@
-//Version 0.1
+//Version 0.2
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -13,8 +13,25 @@ class Engine { //Not much better than doing it manually, but whatever
     }
 }
 
+class KeyboardIn {
+    constructor(kDownFunc, kUpFunc = false) {
+        this.keys = {};
+        let kb = this;
+        document.addEventListener('keydown', function(e) {
+            kb.keys[e.key.toLowerCase()] = true;
+            kDownFunc(e.key.toLowerCase());
+        });
+        document.addEventListener('keyup', function(e) {
+            delete kb.keys[e.key.toLowerCase()];
+            if (kUpFunc) {
+                kUpFunc(e.key.toLowerCase());
+            }
+        });
+    }
+}
+
 class Canvas {
-    constructor(id, width=1920, height=1080, mDownFunc=false, mUpFunc=false) {
+    constructor(id, width=1920, height=1080, funcs=false) {
         this.element = document.createElement('canvas');
         this.element.id = id;
         document.body.appendChild(this.element);
@@ -36,14 +53,14 @@ class Canvas {
         this.mouseDown = false;
         this.element.addEventListener('mousedown', function(e) {
             canvas.mouseDown = true;
-            if (mDownFunc) {
-                mDownFunc(canvas.mousePos);
+            if (funcs.mDownFunc) {
+                funcs.mDownFunc(canvas.mousePos);
             }
         });
         this.element.addEventListener('mouseup', function(e) {
             canvas.mouseDown = false;
-            if (mUpFunc) {
-                mUpFunc(canvas.mousePos);
+            if (funcs.mUpFunc) {
+                funcs.mUpFunc(canvas.mousePos);
             }
         });
     }
