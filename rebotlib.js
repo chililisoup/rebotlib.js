@@ -1,4 +1,4 @@
-//Version 0.2
+//Version 0.2.1
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -187,11 +187,6 @@ class Quadtree { //Slightly modified https://github.com/timohausmann/quadtree-js
                 }
             }
             this.objects = [];
-        }
-    }
-    insertAll(items) {
-        for (let i = 0; i < items.length; i++) {
-            this.insert(items[i]);
         }
     }
     retrieve(item) {
