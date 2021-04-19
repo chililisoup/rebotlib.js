@@ -1,4 +1,4 @@
-//Version 0.2.1
+//Version 0.3
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -31,7 +31,7 @@ class KeyboardIn {
 }
 
 class Canvas {
-    constructor(id, width=1920, height=1080, funcs=false) {
+    constructor(id, width=1920, height=1080, params=false) {
         this.element = document.createElement('canvas');
         this.element.id = id;
         document.body.appendChild(this.element);
@@ -41,6 +41,7 @@ class Canvas {
         this.ctx.canvas.height = height;
         
         this.mousePos = {x:0, y:0};
+        this.buttons = [];
         let canvas = this;
         this.element.addEventListener('mousemove', function(e) {
             let rect = canvas.element.getBoundingClientRect();
@@ -53,19 +54,50 @@ class Canvas {
         this.mouseDown = false;
         this.element.addEventListener('mousedown', function(e) {
             canvas.mouseDown = true;
-            if (funcs.mDownFunc) {
-                funcs.mDownFunc(canvas.mousePos);
+            if (params.mDownFunc) {
+                params.mDownFunc(canvas.mousePos);
+            }
+            for (let i = 0; i < canvas.buttons.length; i++) {
+                if (canvas.mousePos.x >= canvas.buttons[i].x
+                    && canvas.mousePos.x <= canvas.buttons[i].x + canvas.buttons[i].width
+                    && canvas.mousePos.y >= canvas.buttons[i].y
+                    && canvas.mousePos.y <= canvas.buttons[i].y + canvas.buttons[i].height
+                    ) {
+                    canvas.buttons[i].func();
+                }
             }
         });
         this.element.addEventListener('mouseup', function(e) {
             canvas.mouseDown = false;
-            if (funcs.mUpFunc) {
-                funcs.mUpFunc(canvas.mousePos);
+            if (params.mUpFunc) {
+                params.mUpFunc(canvas.mousePos);
             }
         });
     }
     getMousePos() {
         return this.mousePos;
+    }
+    createButton(id, func, x, y, width, height) {
+        for (let i = 0; i < this.buttons.length; i++) {
+            if (this.buttons[i].id == id) throw 'ID \'' + id + '\' is already in use!';
+        }
+        this.buttons.push({
+            id: id,
+            func: func,
+            x: x,
+            y: y,
+            width: width,
+            height: height
+        });
+    }
+    deleteButton(id) {
+        for (let i = 0; i < this.buttons.length; i++) {
+            if (this.buttons[i].id == id) {
+                this.buttons.splice(i, 1);
+                return true;
+            }
+        }
+        throw 'Button \'' + id + '\' does not exist!';
     }
 }
 
