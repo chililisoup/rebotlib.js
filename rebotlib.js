@@ -1,4 +1,4 @@
-//Version 0.3
+//Version 0.3.1
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -73,6 +73,28 @@ class Canvas {
                 params.mUpFunc(canvas.mousePos);
             }
         });
+    }
+    wrapText(text, x, y, width, spacing = 50) {
+        let words = text.split(' '),
+            currentLine = [0, ''];
+        for (let i = 0; i < words.length; i++) {
+            let potentialLine = currentLine[1] + words[i] + ' ',
+                measure = this.ctx.measureText(potentialLine);
+            if (measure.width <= width) {
+                currentLine[0]++;
+                currentLine[1] = potentialLine;
+            } else {
+                if (currentLine[0] == 0) {
+                    ctx.fillText(potentialLine, x, y);
+                    currentLine = [0, ''];
+                } else {
+                    ctx.fillText(currentLine[1], x, y);
+                    currentLine = [0, words[i] + ' '];
+                }
+                y += spacing;
+            }
+        }
+        ctx.fillText(currentLine[1], x, y);
     }
     getMousePos() {
         return this.mousePos;
