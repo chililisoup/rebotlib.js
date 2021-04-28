@@ -1,4 +1,4 @@
-//Version 0.3.1
+//Version 0.3.2
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -14,18 +14,15 @@ class Engine { //Not much better than doing it manually, but whatever
 }
 
 class KeyboardIn {
-    constructor(kDownFunc, kUpFunc = false) {
+    constructor(kDownFunc = false, kUpFunc = false) {
         this.keys = {};
-        let kb = this;
-        document.addEventListener('keydown', function(e) {
-            kb.keys[e.key.toLowerCase()] = true;
-            kDownFunc(e.key.toLowerCase());
+        document.addEventListener('keydown', (e) => {
+            this.keys[e.key.toLowerCase()] = true;
+            if (kDownFunc) kDownFunc(e.key.toLowerCase());
         });
-        document.addEventListener('keyup', function(e) {
-            delete kb.keys[e.key.toLowerCase()];
-            if (kUpFunc) {
-                kUpFunc(e.key.toLowerCase());
-            }
+        document.addEventListener('keyup', (e) => {
+            delete this.keys[e.key.toLowerCase()];
+            if (kUpFunc) kUpFunc(e.key.toLowerCase());
         });
     }
 }
@@ -42,36 +39,31 @@ class Canvas {
         
         this.mousePos = {x:0, y:0};
         this.buttons = [];
-        let canvas = this;
-        this.element.addEventListener('mousemove', function(e) {
-            let rect = canvas.element.getBoundingClientRect();
-            canvas.mousePos = {
-                x: (e.clientX - rect.left) / (rect.right - rect.left) * canvas.element.width,
-                y: (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.element.height
+        this.element.addEventListener('mousemove', (e) => {
+            let rect = this.element.getBoundingClientRect();
+            this.mousePos = {
+                x: (e.clientX - rect.left) / (rect.right - rect.left) * this.element.width,
+                y: (e.clientY - rect.top) / (rect.bottom - rect.top) * this.element.height
             };
         });
         
         this.mouseDown = false;
-        this.element.addEventListener('mousedown', function(e) {
-            canvas.mouseDown = true;
-            if (params.mDownFunc) {
-                params.mDownFunc(canvas.mousePos);
-            }
-            for (let i = 0; i < canvas.buttons.length; i++) {
-                if (canvas.mousePos.x >= canvas.buttons[i].x
-                    && canvas.mousePos.x <= canvas.buttons[i].x + canvas.buttons[i].width
-                    && canvas.mousePos.y >= canvas.buttons[i].y
-                    && canvas.mousePos.y <= canvas.buttons[i].y + canvas.buttons[i].height
+        this.element.addEventListener('mousedown', (e) => {
+            this.mouseDown = true;
+            if (params.mDownFunc) params.mDownFunc(this.mousePos);
+            for (let i = 0; i < this.buttons.length; i++) {
+                if (this.mousePos.x >= this.buttons[i].x
+                    && this.mousePos.x <= this.buttons[i].x + this.buttons[i].width
+                    && this.mousePos.y >= this.buttons[i].y
+                    && this.mousePos.y <= this.buttons[i].y + this.buttons[i].height
                     ) {
-                    canvas.buttons[i].func();
+                    this.buttons[i].func();
                 }
             }
         });
-        this.element.addEventListener('mouseup', function(e) {
-            canvas.mouseDown = false;
-            if (params.mUpFunc) {
-                params.mUpFunc(canvas.mousePos);
-            }
+        this.element.addEventListener('mouseup', (e) => {
+            this.mouseDown = false;
+            if (params.mUpFunc) params.mUpFunc(this.mousePos);
         });
     }
     wrapText(text, x, y, width, spacing = 50) {
@@ -84,7 +76,7 @@ class Canvas {
                 currentLine[0]++;
                 currentLine[1] = potentialLine;
             } else {
-                if (currentLine[0] == 0) {
+                if (currentLine[0] === 0) {
                     ctx.fillText(potentialLine, x, y);
                     currentLine = [0, ''];
                 } else {
@@ -128,9 +120,8 @@ class FunctionPoller {
         this.element = document.createElement('code');
         document.body.appendChild(this.element);
         
-        let element = this.element;
-        setInterval(function() {
-            element.innerHTML = tag.concat(func());
+        setInterval(() => {
+            this.element.innerHTML = tag.concat(func());
         }, interval);
     }
 }
