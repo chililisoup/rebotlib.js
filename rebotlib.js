@@ -1,4 +1,4 @@
-//Version 0.3.3
+//Version 0.3.3.1
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -57,7 +57,7 @@ class Canvas {
                     && this.mousePos.y >= this.buttons[i].y
                     && this.mousePos.y <= this.buttons[i].y + this.buttons[i].height
                     ) {
-                    this.buttons[i].func(this.buttons[i].id);
+                    this.buttons[i].func(this.buttons[i]);
                 }
             }
         });
