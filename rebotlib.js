@@ -1,4 +1,4 @@
-//Version 0.3.3.1
+//Version 0.3.4
 
 class Engine { //Not much better than doing it manually, but whatever
     constructor(func, interval) {
@@ -6,10 +6,21 @@ class Engine { //Not much better than doing it manually, but whatever
         this.func = func;
     }
     start() {
-        this.engine = setInterval(this.func, this.interval);
+        this.engine = setInterval(() => {
+            this.func();
+            if (this.newTime) {
+                this.stop();
+                this.interval = this.updateTime;
+                this.newTime = null;
+                this.start();
+            }
+        }, this.interval);
     }
     stop() {
         clearInterval(this.engine);
+    }
+    updateTime(ms) {
+        this.newTime = ms;
     }
 }
 
